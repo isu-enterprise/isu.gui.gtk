@@ -9,3 +9,10 @@ class TestsSimple:
 
     def tearDown(self):
         pass
+
+
+class TestImportMainApp:
+
+    def test_import(self):
+        from isu.gui.gtk import application
+        assert application.main
