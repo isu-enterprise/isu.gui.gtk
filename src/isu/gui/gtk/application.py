@@ -6,7 +6,7 @@ from gi.repository import Gtk
 
 from isu.enterprise.application.interfaces import IApplication
 from zope.interface import implementer
-from zope.component import getGlobalSiteManager
+from zope.component import getGlobalSiteManager, getUtility
 
 
 @implementer(IApplication)
@@ -24,5 +24,11 @@ class Application(object):
         win.show_all()
         Gtk.main()
 
+
 GSM = getGlobalSiteManager()
 GSM.registerUtility(Application())
+
+
+def main():
+    app = getUtility(IApplication)
+    return app.run()
