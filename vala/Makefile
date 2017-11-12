@@ -1,6 +1,6 @@
 .PHONY: run build all
 
-LIB_NAME=icc_gui_gtk
+LIB_NAME=icc_gui
 VALA_FLAGS=-X -fPIC -X -shared -o $(LIB_NAME).so
 PACKAGES=--pkg=gtk+-3.0 --pkg=glib-2.0
 

@@ -1,7 +1,7 @@
 using Gtk;
 using GLib;
 
-namespace icc_gui_gtk {
+namespace Icc.Gui {
 	public bool DEBUG = true;
 	public class Application : Gtk.Application {
 
