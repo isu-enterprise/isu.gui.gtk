@@ -5,25 +5,46 @@ namespace Icc.Gui {
 	public bool DEBUG = true;
 	public class Application : Gtk.Application {
 
-		public Gtk.ApplicationWindow application_window;
-		public Gtk.Builder ui_builder;
+		public Gtk.ApplicationWindow application_window {construct set; get; }
+		public Gtk.Builder ui_builder {construct set; get;}
+		public string? filename { construct set; get; }
 
-		protected string ui_filename;
+		public Application(
+			string? application_id = null,
+			ApplicationFlags flags,
+			string? filename = null) {
+			Object(application_id: application_id,
+				   flags: flags);
 
-		public Application(string filename = "") throws GLib.Error {
-			// base();
 			this.ui_builder=new Gtk.Builder();
 			application_window = null;
-			if (filename == "") {
-				ui_filename = null;
-			} else {
-				load_ui_from_file(filename);
-			};
+			this.filename = filename;
+		}
+
+		public virtual signal void init_failure () {
+			if (DEBUG) {
+				stderr.printf("Abnormally closing application\n");
+			}
+			quit();
+		}
+
+		public override void activate() {
+			try {
+				stdout.puts("QWeqwe\n");
+				if (filename != null) {
+					load_ui_from_file(filename);
+				}
+			} catch (GLib.Error e) {
+				stderr.printf("Could not load user interface: %s\n", e.message);
+				init_failure();
+			}
+			add_window(application_window);
+			application_window.show_all();
 		}
 
 		public void load_ui_from_file(string filename) throws GLib.Error {
-			this.ui_filename=filename;
-			this.ui_builder.add_from_file(this.ui_filename);
+			this.filename=filename;
+			this.ui_builder.add_from_file(this.filename);
 			acquire_application_window();
 			acquire_widgets(this, this.ui_builder);
 		}
@@ -39,9 +60,9 @@ namespace Icc.Gui {
 
 		public virtual void on_application_window_destroy() {
 			if (DEBUG) {
-				stdout.printf("Closing application\n");
+				stdout.printf("Normally closing application\n");
 			}
-			Gtk.main_quit();
+			quit();
 		}
 	}
 }

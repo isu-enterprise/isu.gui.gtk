@@ -8,6 +8,7 @@
 #include <gtk/gtk.h>
 #include <stdlib.h>
 #include <string.h>
+#include <gio/gio.h>
 
 G_BEGIN_DECLS
 
@@ -26,24 +27,28 @@ typedef struct _IccGuiApplicationPrivate IccGuiApplicationPrivate;
 struct _IccGuiApplication {
 	GtkApplication parent_instance;
 	IccGuiApplicationPrivate * priv;
-	GtkApplicationWindow* application_window;
-	GtkBuilder* ui_builder;
-	gchar* ui_filename;
 };
 
 struct _IccGuiApplicationClass {
 	GtkApplicationClass parent_class;
 	void (*on_application_window_destroy) (IccGuiApplication* self);
+	void (*init_failure) (IccGuiApplication* self);
 	void (*acquire_widgets) (IccGuiApplication* self, IccGuiApplication* app, GtkBuilder* builder);
 };
 
 
 extern gboolean icc_gui_DEBUG;
 GType icc_gui_application_get_type (void) G_GNUC_CONST;
-IccGuiApplication* icc_gui_application_new (const gchar* filename, GError** error);
-IccGuiApplication* icc_gui_application_construct (GType object_type, const gchar* filename, GError** error);
+IccGuiApplication* icc_gui_application_new (const gchar* application_id, GApplicationFlags flags, const gchar* filename);
+IccGuiApplication* icc_gui_application_construct (GType object_type, const gchar* application_id, GApplicationFlags flags, const gchar* filename);
 void icc_gui_application_load_ui_from_file (IccGuiApplication* self, const gchar* filename, GError** error);
 void icc_gui_application_on_application_window_destroy (IccGuiApplication* self);
+GtkApplicationWindow* icc_gui_application_get_application_window (IccGuiApplication* self);
+void icc_gui_application_set_application_window (IccGuiApplication* self, GtkApplicationWindow* value);
+GtkBuilder* icc_gui_application_get_ui_builder (IccGuiApplication* self);
+void icc_gui_application_set_ui_builder (IccGuiApplication* self, GtkBuilder* value);
+const gchar* icc_gui_application_get_filename (IccGuiApplication* self);
+void icc_gui_application_set_filename (IccGuiApplication* self, const gchar* value);
 
 
 G_END_DECLS
