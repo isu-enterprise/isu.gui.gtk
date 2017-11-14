@@ -5,32 +5,40 @@ namespace Icc.Gui {
 	public bool DEBUG = true;
 	public class Application : Gtk.Application {
 
-		public Gtk.ApplicationWindow application_window {construct set; get; }
-		public Gtk.Builder ui_builder {construct set; get;}
+		public Gtk.ApplicationWindow application_window {private set; get; }
+		public Gtk.Builder ui_builder {private set; get;}
 		public string? filename { construct set; get; }
+
+		construct {
+			if (DEBUG) {
+				stdout.puts("Run construct\n");
+			}
+		}
 
 		public Application(
 			string? application_id = null,
 			ApplicationFlags flags,
 			string? filename = null) {
 			Object(application_id: application_id,
-				   flags: flags);
+				   flags: flags,
+				   filename: filename
+				);
 
-			this.ui_builder=new Gtk.Builder();
+			ui_builder = null;
 			application_window = null;
-			this.filename = filename;
 		}
 
 		public virtual signal void init_failure () {
 			if (DEBUG) {
 				stderr.printf("Abnormally closing application\n");
 			}
+			// Gtk.main_quit();
 			quit();
 		}
 
-		public override void activate() {
+		protected override void startup() {
 			try {
-				stdout.puts("QWeqwe\n");
+				stdout.puts("Setup\n");
 				if (filename != null) {
 					load_ui_from_file(filename);
 				}
@@ -38,18 +46,28 @@ namespace Icc.Gui {
 				stderr.printf("Could not load user interface: %s\n", e.message);
 				init_failure();
 			}
-			add_window(application_window);
-			application_window.show_all();
+		}
+
+		protected override void activate() {
+			if (application_window == null) {
+				stderr.printf("No application window set up at startup!\n");
+				init_failure();
+			} else {
+				application_window.show_all();
+				add_window(application_window);
+			}
 		}
 
 		public void load_ui_from_file(string filename) throws GLib.Error {
 			this.filename=filename;
-			this.ui_builder.add_from_file(this.filename);
+			this.ui_builder=new Gtk.Builder();
+
+			ui_builder.add_from_file(this.filename);
 			acquire_application_window();
 			acquire_widgets(this, this.ui_builder);
 		}
 
-		public virtual signal void acquire_widgets (Application app, Gtk.Builder builder) {
+		public virtual void acquire_widgets (Application app, Gtk.Builder builder) {
 			acquire_application_window();
 		}
 
