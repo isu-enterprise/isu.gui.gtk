@@ -4,15 +4,13 @@ namespace Icc {
 	namespace Gui {
 		[CCode (cheader_filename = "icc_gui.h")]
 		public class Application : Gtk.Application {
-			public Application (string? application_id = null, GLib.ApplicationFlags flags, string? filename = null);
-			public virtual void acquire_widgets (Icc.Gui.Application app, Gtk.Builder builder);
-			protected override void activate ();
+			public Application ();
 			public void load_ui_from_file (string filename) throws GLib.Error;
+			protected void on_activate ();
 			public virtual void on_application_window_destroy ();
-			protected override void startup ();
+			protected void on_startup ();
 			public Gtk.ApplicationWindow application_window { get; private set; }
-			public string? filename { get; set construct; }
-			public Gtk.Builder ui_builder { get; private set; }
+			public signal void acquire_widgets (Icc.Gui.Application app, Gtk.Builder builder);
 			public virtual signal void init_failure ();
 		}
 		[CCode (cheader_filename = "icc_gui.h")]
