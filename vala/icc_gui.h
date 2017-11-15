@@ -37,13 +37,13 @@ struct _IccGuiApplicationClass {
 
 extern gboolean icc_gui_DEBUG;
 GType icc_gui_application_get_type (void) G_GNUC_CONST;
-void icc_gui_application_on_startup (IccGuiApplication* self);
 void icc_gui_application_on_activate (IccGuiApplication* self);
 void icc_gui_application_load_ui_from_file (IccGuiApplication* self, const gchar* filename, GError** error);
 void icc_gui_application_on_application_window_destroy (IccGuiApplication* self);
 IccGuiApplication* icc_gui_application_new (void);
 IccGuiApplication* icc_gui_application_construct (GType object_type);
 GtkApplicationWindow* icc_gui_application_get_application_window (IccGuiApplication* self);
+void icc_gui_application_set_application_window (IccGuiApplication* self, GtkApplicationWindow* value);
 
 
 G_END_DECLS

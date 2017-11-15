@@ -8,9 +8,8 @@ namespace Icc {
 			public void load_ui_from_file (string filename) throws GLib.Error;
 			protected void on_activate ();
 			public virtual void on_application_window_destroy ();
-			protected void on_startup ();
-			public Gtk.ApplicationWindow application_window { get; private set; }
-			public signal void acquire_widgets (Icc.Gui.Application app, Gtk.Builder builder);
+			public Gtk.ApplicationWindow application_window { get; protected set; }
+			public signal void acquire_widgets (Gtk.Builder builder);
 			public virtual signal void init_failure ();
 		}
 		[CCode (cheader_filename = "icc_gui.h")]

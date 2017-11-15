@@ -57,44 +57,20 @@ static gpointer icc_gui_application_parent_class = NULL;
 
 GType icc_gui_application_get_type (void) G_GNUC_CONST;
 #define ICC_GUI_APPLICATION_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), ICC_GUI_TYPE_APPLICATION, IccGuiApplicationPrivate))
-void icc_gui_application_on_startup (IccGuiApplication* self);
-static void icc_gui_application_set_application_window (IccGuiApplication* self, GtkApplicationWindow* value);
-GtkApplicationWindow* icc_gui_application_get_application_window (IccGuiApplication* self);
-void icc_gui_application_on_application_window_destroy (IccGuiApplication* self);
-static void _icc_gui_application_on_application_window_destroy_gtk_widget_destroy (GtkWidget* _sender, gpointer self);
 void icc_gui_application_on_activate (IccGuiApplication* self);
+GtkApplicationWindow* icc_gui_application_get_application_window (IccGuiApplication* self);
 void icc_gui_application_load_ui_from_file (IccGuiApplication* self, const gchar* filename, GError** error);
+void icc_gui_application_on_application_window_destroy (IccGuiApplication* self);
 static void icc_gui_application_real_on_application_window_destroy (IccGuiApplication* self);
 IccGuiApplication* icc_gui_application_new (void);
 IccGuiApplication* icc_gui_application_construct (GType object_type);
+void icc_gui_application_set_application_window (IccGuiApplication* self, GtkApplicationWindow* value);
 static void icc_gui_application_real_init_failure (IccGuiApplication* self);
-static void g_cclosure_user_marshal_VOID__OBJECT_OBJECT (GClosure * closure, GValue * return_value, guint n_param_values, const GValue * param_values, gpointer invocation_hint, gpointer marshal_data);
 static GObject * icc_gui_application_constructor (GType type, guint n_construct_properties, GObjectConstructParam * construct_properties);
-static void _icc_gui_application_on_startup_g_application_startup (GApplication* _sender, gpointer self);
 static void _icc_gui_application_on_activate_g_application_activate (GApplication* _sender, gpointer self);
 static void icc_gui_application_finalize (GObject * obj);
 static void _vala_icc_gui_application_get_property (GObject * object, guint property_id, GValue * value, GParamSpec * pspec);
 static void _vala_icc_gui_application_set_property (GObject * object, guint property_id, const GValue * value, GParamSpec * pspec);
-
-
-static void _icc_gui_application_on_application_window_destroy_gtk_widget_destroy (GtkWidget* _sender, gpointer self) {
-	icc_gui_application_on_application_window_destroy ((IccGuiApplication*) self);
-}
-
-
-void icc_gui_application_on_startup (IccGuiApplication* self) {
-	GtkApplicationWindow* _tmp0_;
-	GtkApplicationWindow* _tmp1_;
-	GtkApplicationWindow* _tmp2_;
-	g_return_if_fail (self != NULL);
-	_tmp0_ = (GtkApplicationWindow*) gtk_application_window_new ((GtkApplication*) self);
-	g_object_ref_sink (_tmp0_);
-	_tmp1_ = _tmp0_;
-	icc_gui_application_set_application_window (self, _tmp1_);
-	_g_object_unref0 (_tmp1_);
-	_tmp2_ = self->priv->_application_window;
-	g_signal_connect_object ((GtkWidget*) _tmp2_, "destroy", (GCallback) _icc_gui_application_on_application_window_destroy_gtk_widget_destroy, self, 0);
-}
 
 
 void icc_gui_application_on_activate (IccGuiApplication* self) {
@@ -133,7 +109,7 @@ void icc_gui_application_load_ui_from_file (IccGuiApplication* self, const gchar
 		_g_object_unref0 (builder);
 		return;
 	}
-	g_signal_emit (self, icc_gui_application_signals[ICC_GUI_APPLICATION_ACQUIRE_WIDGETS_SIGNAL], 0, self, builder);
+	g_signal_emit (self, icc_gui_application_signals[ICC_GUI_APPLICATION_ACQUIRE_WIDGETS_SIGNAL], 0, builder);
 	_g_object_unref0 (builder);
 }
 
@@ -183,7 +159,7 @@ static gpointer _g_object_ref0 (gpointer self) {
 }
 
 
-static void icc_gui_application_set_application_window (IccGuiApplication* self, GtkApplicationWindow* value) {
+void icc_gui_application_set_application_window (IccGuiApplication* self, GtkApplicationWindow* value) {
 	g_return_if_fail (self != NULL);
 	if (icc_gui_application_get_application_window (self) != value) {
 		GtkApplicationWindow* _tmp0_;
@@ -202,31 +178,6 @@ static void icc_gui_application_real_init_failure (IccGuiApplication* self) {
 	_tmp0_ = stderr;
 	fputs ("Exit on failure.\n", _tmp0_);
 	g_application_quit ((GApplication*) self);
-}
-
-
-static void g_cclosure_user_marshal_VOID__OBJECT_OBJECT (GClosure * closure, GValue * return_value, guint n_param_values, const GValue * param_values, gpointer invocation_hint, gpointer marshal_data) {
-	typedef void (*GMarshalFunc_VOID__OBJECT_OBJECT) (gpointer data1, gpointer arg_1, gpointer arg_2, gpointer data2);
-	register GMarshalFunc_VOID__OBJECT_OBJECT callback;
-	register GCClosure * cc;
-	register gpointer data1;
-	register gpointer data2;
-	cc = (GCClosure *) closure;
-	g_return_if_fail (n_param_values == 3);
-	if (G_CCLOSURE_SWAP_DATA (closure)) {
-		data1 = closure->data;
-		data2 = param_values->data[0].v_pointer;
-	} else {
-		data1 = param_values->data[0].v_pointer;
-		data2 = closure->data;
-	}
-	callback = (GMarshalFunc_VOID__OBJECT_OBJECT) (marshal_data ? marshal_data : cc->callback);
-	callback (data1, g_value_get_object (param_values + 1), g_value_get_object (param_values + 2), data2);
-}
-
-
-static void _icc_gui_application_on_startup_g_application_startup (GApplication* _sender, gpointer self) {
-	icc_gui_application_on_startup ((IccGuiApplication*) self);
 }
 
 
@@ -249,7 +200,6 @@ static GObject * icc_gui_application_constructor (GType type, guint n_construct_
 		_tmp1_ = stdout;
 		fputs ("Run construct\n", _tmp1_);
 	}
-	g_signal_connect_object ((GApplication*) self, "startup", (GCallback) _icc_gui_application_on_startup_g_application_startup, self, 0);
 	g_signal_connect_object ((GApplication*) self, "activate", (GCallback) _icc_gui_application_on_activate_g_application_activate, self, 0);
 	return obj;
 }
@@ -264,9 +214,9 @@ static void icc_gui_application_class_init (IccGuiApplicationClass * klass) {
 	G_OBJECT_CLASS (klass)->set_property = _vala_icc_gui_application_set_property;
 	G_OBJECT_CLASS (klass)->constructor = icc_gui_application_constructor;
 	G_OBJECT_CLASS (klass)->finalize = icc_gui_application_finalize;
-	g_object_class_install_property (G_OBJECT_CLASS (klass), ICC_GUI_APPLICATION_APPLICATION_WINDOW_PROPERTY, icc_gui_application_properties[ICC_GUI_APPLICATION_APPLICATION_WINDOW_PROPERTY] = g_param_spec_object ("application-window", "application-window", "application-window", gtk_application_window_get_type (), G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK | G_PARAM_STATIC_BLURB | G_PARAM_READABLE));
+	g_object_class_install_property (G_OBJECT_CLASS (klass), ICC_GUI_APPLICATION_APPLICATION_WINDOW_PROPERTY, icc_gui_application_properties[ICC_GUI_APPLICATION_APPLICATION_WINDOW_PROPERTY] = g_param_spec_object ("application-window", "application-window", "application-window", gtk_application_window_get_type (), G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK | G_PARAM_STATIC_BLURB | G_PARAM_READABLE | G_PARAM_WRITABLE));
 	icc_gui_application_signals[ICC_GUI_APPLICATION_INIT_FAILURE_SIGNAL] = g_signal_new ("init-failure", ICC_GUI_TYPE_APPLICATION, G_SIGNAL_RUN_LAST, G_STRUCT_OFFSET (IccGuiApplicationClass, init_failure), NULL, NULL, g_cclosure_marshal_VOID__VOID, G_TYPE_NONE, 0);
-	icc_gui_application_signals[ICC_GUI_APPLICATION_ACQUIRE_WIDGETS_SIGNAL] = g_signal_new ("acquire-widgets", ICC_GUI_TYPE_APPLICATION, G_SIGNAL_RUN_LAST, 0, NULL, NULL, g_cclosure_user_marshal_VOID__OBJECT_OBJECT, G_TYPE_NONE, 2, ICC_GUI_TYPE_APPLICATION, gtk_builder_get_type ());
+	icc_gui_application_signals[ICC_GUI_APPLICATION_ACQUIRE_WIDGETS_SIGNAL] = g_signal_new ("acquire-widgets", ICC_GUI_TYPE_APPLICATION, G_SIGNAL_RUN_LAST, 0, NULL, NULL, g_cclosure_marshal_VOID__OBJECT, G_TYPE_NONE, 1, gtk_builder_get_type ());
 }
 
 

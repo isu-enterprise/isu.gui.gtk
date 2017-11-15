@@ -5,13 +5,13 @@ namespace Icc.Gui {
 	public bool DEBUG = true;
 	public class Application : Gtk.Application {
 
-		public Gtk.ApplicationWindow application_window {private set; get; }
+		public Gtk.ApplicationWindow application_window {protected set; get; }
 
 		construct {
 			if (DEBUG) {
 				stdout.puts("Run construct\n");
 			}
-			startup.connect(on_startup);
+			// startup.connect(on_startup);
 			activate.connect(on_activate);
 		}
 
@@ -20,10 +20,10 @@ namespace Icc.Gui {
 			quit();
 		}
 
-		protected void on_startup() {
-			application_window = new Gtk.ApplicationWindow(this);
-			application_window.destroy.connect(on_application_window_destroy);
-		}
+		// protected void on_startup() {
+		// 	application_window = new Gtk.ApplicationWindow(this);
+		// 	application_window.destroy.connect(on_application_window_destroy);
+		// }
 
 		protected  void on_activate() {
 			if (application_window == null) {
@@ -38,10 +38,10 @@ namespace Icc.Gui {
 		public void load_ui_from_file(string filename) throws GLib.Error{
 			var builder=new Gtk.Builder();
 			builder.add_from_file(filename);
-			acquire_widgets(this, builder);
+			acquire_widgets(builder);
 		}
 
-		public signal void acquire_widgets (Application app, Gtk.Builder builder);
+		public signal void acquire_widgets (Gtk.Builder builder);
 
 		public virtual void on_application_window_destroy() {
 			if (DEBUG) {
